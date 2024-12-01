@@ -1,7 +1,41 @@
 import sys
 import sqlite3
 from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QDialog, QLabel
+
+
+class AddEditCoffeeForm(QDialog):
+    def __init__(self):
+        super().__init__()
+        self.conn = sqlite3.connect('coffee.sqlite')
+        self.cursor = self.conn.cursor()
+        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.pushButton.clicked.connect(self.add_coffe)
+        self.leble = QLabel()
+
+    def check_line_edit(self):
+        print(any([self.nameLabel.text() != '', self.roastLabel.text() != '', self.groundLabel.text() != '',
+                   self.flavorLabel.text() != '', self.priceLabel.text() != '', self.volumeLabel.text() != '']))
+        return self.nameLabel.text()
+
+    def add_coffe(self):
+        if not self.check_line_edit():
+            self.status_lable.setText('Поля не заполнены')
+        else:
+            name = self.nameLabel.text()
+            roast_degree = self.roastLabel.text()
+            grind_type = self.groundLabel.text()
+            taste_description = self.flavorLabel.text()
+            price = self.priceLabel.text()
+            package_volume = self.volumeLabel.text()
+            self.cursor.execute(
+                "INSERT INTO coffee (name, roast_level, ground, flavor_description,"
+                " price, package_volume) VALUES (?, ?, ?, ?, ?, ?)",
+                (name, roast_degree, grind_type, taste_description, price, package_volume)
+            )
+
+            self.conn.commit()  # Сохраняем изменения
+            QMessageBox.information(self, "Success", "Coffee record saved successfully!")
 
 
 class CoffeeApp(QMainWindow):
@@ -14,6 +48,11 @@ class CoffeeApp(QMainWindow):
 
         self.conn = sqlite3.connect('coffee.sqlite')
         self.cursor = self.conn.cursor()
+        self.addButton.clicked.connect(self.run)
+
+    def run(self):
+        self.windoww = AddEditCoffeeForm()
+        self.windoww.show()
 
     def load_coffee_data(self):
         try:
