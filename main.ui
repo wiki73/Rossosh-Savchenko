@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>512</width>
+    <height>498</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QPushButton" name="loadButton">
+      <property name="text">
+       <string>загрузить</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QListWidget" name="coffee_list"/>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>Детали о кофе</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="nameLabel">
+         <property name="text">
+          <string>Название сорта: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="roastLabel">
+         <property name="text">
+          <string>Степень обжарки:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="groundLabel">
+         <property name="text">
+          <string>&quot;Молотый/В зернах: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="flavorLabel">
+         <property name="text">
+          <string>Описание вкуса:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="priceLabel">
+         <property name="text">
+          <string>Цена: </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="volumeLabel">
+         <property name="text">
+          <string>Объем упаковки:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>512</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,39 +1,55 @@
 import sys
-import random
+import sqlite3
 from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6.QtGui import QPainter, QColor
-from PyQt6.QtCore import Qt, QRect
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox
 
-class MyWidget(QMainWindow):
+
+class CoffeeApp(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)
-        self.pushButton.clicked.connect(self.draw_random_circle)
+        uic.loadUi('main.ui', self)
 
-        self.circles = []
+        self.loadButton.clicked.connect(self.load_coffee_data)
+        self.coffee_list.currentItemChanged.connect(self.display_coffee_details)
 
-    def draw_random_circle(self):
-        diameter = random.randint(20, 100)
+        self.conn = sqlite3.connect('coffee.sqlite')
+        self.cursor = self.conn.cursor()
 
-        x = random.randint(0, self.width() - diameter)
-        y = random.randint(0, self.height() - diameter)
+    def load_coffee_data(self):
+        try:
+            self.cursor.execute("SELECT id, name FROM coffee")
+            coffee_data = self.cursor.fetchall()
+            self.coffee_list.clear()
+            for coffee in coffee_data:
+                self.coffee_list.addItem(f"{coffee[0]}: {coffee[1]}")
 
-        color = QColor(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        except sqlite3.Error as e:
+            QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить данные: {e}")
 
-        self.circles.append((x, y, diameter, color))
+    def display_coffee_details(self, current):
+        if current is None:
+            return
 
-        self.update()
+        coffee_id = current.text().split(":")[0]  # Получаем ID кофе из текста
+        try:
+            self.cursor.execute("SELECT * FROM coffee WHERE id = ?", (coffee_id,))
+            coffee = self.cursor.fetchone()
 
-    def paintEvent(self, event):
-        painter = QPainter(self)
+            if coffee:
+                self.nameLabel.setText(coffee[1])
+                self.roastLabel.setText(coffee[2])
+                self.groundLabel.setText("Молотый" if coffee[3] else "В зернах")
+                self.flavorLabel.setText(coffee[4])
+                self.priceLabel.setText(f"{coffee[5]} руб.")
+                self.volumeLabel.setText(f"{coffee[6]} г.")
+            else:
+                QMessageBox.warning(self, "Внимание", "Кофе не найден.")
+        except sqlite3.Error as e:
+            QMessageBox.critical(self, "Ошибка", f"Не удалось получить данные: {e}")
 
-        for x, y, diameter, color in self.circles:
-            painter.setBrush(color)
-            painter.drawEllipse(QRect(x, y, diameter, diameter))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MyWidget()
+    window = CoffeeApp()
     window.show()
     sys.exit(app.exec())
